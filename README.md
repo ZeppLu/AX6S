@@ -92,27 +92,27 @@ Telnet / SSH 用户名：root
 
 8. 稳定版开启 SSH
     - 临时开启 SSH (路由器重启会失效)
-    使用 Telnet 连接路由器，执行下面命令即可临时开启SSH：
+    使用 Telnet 连接路由器，执行下面命令即可使 dropbear 认为自身运行在开发版上，从而临时开启SSH：
       ```shell
-      sed -i 's/channel=.*/channel=\"debug\"/g' /etc/init.d/dropbear
+      sed -i 's/channel=.*/channel=\"stable\"/g' /etc/init.d/dropbear
       /etc/init.d/dropbear restart
       ```
     - 永久开启 SSH
     原理就是添加一个开启自动运行的脚本，来实现自动开启 SSH。缺点就是恢复出厂设置或重新刷机后需要重新添加。
       ```shell
       # 创建一个目录并进入目录
-      mkdir /data/auto_ssh && cd /data/auto_ssh
+      mkdir /data/autostart && cd /data/autostart
       # 下载脚本，如果使用 GitHub 源下载失败，可以尝试使用 jsDelivr CDN 源进行下载
       # GitHub 源
-      curl -O https://github.com/lemoeo/AX6S/raw/main/auto_ssh.sh
+      curl -o ssh.sh https://github.com/ZeppLu/AX6S/raw/main/auto_ssh.sh
       # jsDelivr CDN 源
-      curl -O https://cdn.jsdelivr.net/gh/lemoeo/AX6S@main/auto_ssh.sh
+      curl -o ssh.sh https://cdn.jsdelivr.net/gh/ZeppLu/AX6S@main/auto_ssh.sh
       # 添加执行权限
-      chmod +x auto_ssh.sh
+      chmod +x ssh.sh
       # 添加开机自动运行
       uci set firewall.auto_ssh=include
       uci set firewall.auto_ssh.type='script'
-      uci set firewall.auto_ssh.path='/data/auto_ssh/auto_ssh.sh'
+      uci set firewall.auto_ssh.path='/data/autostart/ssh.sh'
       uci set firewall.auto_ssh.enabled='1'
       uci commit firewall
       ```
